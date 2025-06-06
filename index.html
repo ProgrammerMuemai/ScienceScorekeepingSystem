@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบันทึกคะแนนเก็บ</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- SheetJS (xlsx) for Excel Import/Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        /* Apply Prompt font to the entire page */
+        body {
+            font-family: 'Prompt', sans-serif;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
+        }
+        /* Simple transition for smoother UI changes */
+        .view {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-backdrop {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .prose {
+            line-height: 1.7;
+        }
+        .prose strong {
+            font-weight: 600;
+        }
+        .prose em {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col">
+
+        <!-- Header -->
+        <header class="bg-gradient-to-b from-green-100 to-white shadow-sm p-4 md:p-6">
+            <div class="container mx-auto flex flex-col md:flex-row items-center gap-4">
+                <img src="https://i.postimg.cc/8PsYLzFr/51101210-0-20240105-144051.png" alt="School Logo" class="w-[100px] h-auto">
+                <div class="text-center md:text-left">
+                    <h1 class="text-xl md:text-2xl font-bold text-green-700">ระบบบันทึกคะแนนเก็บ วิชาคณิตศาสตร์ รหัสวิชา ส101</h1>
+                    <p class="text-sm md:text-base text-slate-600 font-medium">ห้องเรียนครู aaaaaaaaaa</p>
+                    <p class="text-xs md:text-sm text-slate-500">โรงเรียนอนุบาลภูคำเบ้า สำนักงานเขตพื้นที่การศึกษาประถมศึกษาขอนแก่น เขต 1</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto p-4 md:p-6">
+            
+            <!-- Navigation and Class Selection -->
+            <div class="bg-white p-4 rounded-xl shadow-md mb-6">
+                <!-- Main Menu Tabs -->
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold mb-2 text-slate-700">เมนูหลัก</h2>
+                    <div id="main-nav" class="flex flex-wrap gap-2 border-b-2 border-slate-100 pb-4">
+                        <button data-view="scores" class="nav-button active-nav">📝 บันทึกคะแนน</button>
+                        <button data-view="students" class="nav-button">👥 จัดการรายชื่อนักเรียน</button>
+                        <button data-view="summary" class="nav-button">📊 สรุปรวมคะแนน</button>
+                        <button data-view="ai" class="nav-button">✨ ผู้ช่วย AI</button>
+                    </div>
+                </div>
+
+                <!-- Class Selector -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-lg font-semibold text-slate-700">เลือกชั้นเรียน</h2>
+                        <button id="manage-classes-btn" class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>
+                            จัดการชั้นเรียน
+                        </button>
+                    </div>
+                    <div id="class-selector" class="flex flex-wrap gap-2">
+                        <!-- Class buttons will be generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Content Area -->
+            <div id="content-area">
+                <!-- Scores View -->
+                <div id="scores-view" class="view"></div>
+                <!-- Students View -->
+                <div id="students-view" class="view hidden"></div>
+                <!-- Summary View -->
+                <div id="summary-view" class="view hidden"></div>
+                <!-- AI Assistant View -->
+                <div id="ai-view" class="view hidden"></div>
+                <!-- Welcome/Instruction Message -->
+                <div id="welcome-message" class="text-center p-10 bg-white rounded-xl shadow-md">
+                    <h2 class="text-2xl font-semibold text-green-600 mb-2">ยินดีต้อนรับสู่ระบบบันทึกคะแนนเก็บ</h2>
+                    <p class="text-slate-500">กรุณาเลือกชั้นเรียนที่ต้องการจัดการข้อมูลจากปุ่มด้านบน</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white p-6 mt-8 border-t border-slate-200">
+            <div class="container mx-auto text-center text-slate-500">
+                <p class="text-sm">ครูสายฝน ต๊ะวันนา | โรงเรียนอนุบาลลำพูน สำนักงานเขตพื้นที่การศึกษาประถมศึกษาลำพูน เขต 1</p>
+                <div class="flex justify-center gap-4 mt-4">
+                    <a href="https://www.facebook.com/kroofontutor2466/" target="_blank" class="hover:text-green-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.196h3.312z"></path></svg>
+                    </a>
+                    <a href="https://www.tiktok.com/@kroofontutor" target="_blank" class="hover:text-green-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-2.43.05-4.84-.94-6.44-2.88-1.59-1.94-2.22-4.67-1.55-7.15.65-2.45 2.51-4.27 4.81-5.02.57-.18 1.16-.3 1.75-.38v4.86c-1.07.18-2.12.5-3.11.98-.62.3-1.2.66-1.74 1.09-.49.39-1.17.61-1.8.4-1.2-.4-1.38-2.21-.49-3.23.83-.93 1.9-1.51 3.01-1.85.38-.11.75-.24 1.13-.35-.02-3.54.02-7.06-.01-10.59Z"></path></svg>
+                    </a>
+                    <a href="https://www.youtube.com/@rainytawanna2656" target="_blank" class="hover:text-green-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582 7.237A2.062 2.062 0 0 0 20.126 5.8a27.182 27.182 0 0 0-16.252 0A2.062 2.062 0 0 0 2.418 7.237a21.465 21.465 0 0 0 0 9.526 2.062 2.062 0 0 0 1.456 1.437 27.182 27.182 0 0 0 16.252 0 2.062 2.062 0 0 0 1.456-1.437 21.465 21.465 0 0 0 0-9.526ZM9.75 14.348V9.652l4.5 2.348-4.5 2.348Z"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Modals (Hidden by default) -->
+    <div id="modal-container" class="hidden">
+        <!-- Add/Edit Student Modal -->
+        <div id="student-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+                <h3 id="student-modal-title" class="text-xl font-semibold mb-4">เพิ่มรายชื่อนักเรียน</h3>
+                <form id="student-form">
+                    <input type="hidden" id="student-id-input">
+                    <div class="mb-4">
+                        <label for="student-number-input" class="block text-sm font-medium text-slate-700 mb-1">เลขที่</label>
+                        <input type="number" id="student-number-input" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="student-name-input" class="block text-sm font-medium text-slate-700 mb-1">ชื่อ-นามสกุล</label>
+                        <input type="text" id="student-name-input" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ยกเลิก</button>
+                        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">บันทึก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Score Item Modal -->
+        <div id="item-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+                <h3 class="text-xl font-semibold mb-4">เพิ่มรายการคะแนน</h3>
+                <form id="item-form">
+                    <div class="mb-4">
+                        <label for="item-name-input" class="block text-sm font-medium text-slate-700 mb-1">ชื่อรายการ</label>
+                        <input type="text" id="item-name-input" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="เช่น แบบฝึกหัดที่ 1" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="item-max-score-input" class="block text-sm font-medium text-slate-700 mb-1">คะแนนเต็ม</label>
+                        <input type="number" id="item-max-score-input" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="เช่น 10" required>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ยกเลิก</button>
+                        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">เพิ่มรายการ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Excel Import Modal -->
+        <div id="excel-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg">
+                <h3 class="text-xl font-semibold mb-2">นำเข้ารายชื่อจาก Excel</h3>
+                <p class="text-sm text-slate-500 mb-4">อัปโหลดไฟล์ .xlsx และจับคู่คอลัมน์ให้ถูกต้อง</p>
+                <input type="file" id="excel-file-input" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 mb-4" accept=".xlsx, .xls">
+                <div id="excel-mapping-area" class="hidden">
+                    <p class="font-medium mb-2">ตัวอย่างข้อมูล 5 แถวแรก:</p>
+                    <div class="overflow-x-auto border rounded-lg mb-4 max-h-48">
+                        <table class="min-w-full text-sm">
+                            <thead id="excel-preview-header" class="bg-slate-50"></thead>
+                            <tbody id="excel-preview-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="excel-map-number" class="block text-sm font-medium text-slate-700 mb-1">คอลัมน์ 'เลขที่'</label>
+                            <select id="excel-map-number" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"></select>
+                        </div>
+                        <div>
+                            <label for="excel-map-name" class="block text-sm font-medium text-slate-700 mb-1">คอลัมน์ 'ชื่อ-นามสกุล'</label>
+                            <select id="excel-map-name" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"></select>
+                        </div>
+                    </div>
+                </div>
+                 <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ยกเลิก</button>
+                    <button id="import-excel-btn" type="button" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:bg-slate-300" disabled>ยืนยันการนำเข้า</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Confirm Deletion Modal -->
+        <div id="confirm-delete-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                </div>
+                <h3 id="delete-modal-title" class="text-lg font-semibold text-slate-900">ยืนยันการลบ</h3>
+                <div class="mt-2">
+                    <p id="delete-modal-text" class="text-sm text-slate-500"></p>
+                </div>
+                <div class="mt-6 flex justify-center gap-3">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors w-24">ยกเลิก</button>
+                    <button id="confirm-delete-btn" type="button" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors w-24">ลบ</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Info/Error Modal -->
+        <div id="info-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md text-center">
+                <h3 id="info-modal-title" class="text-lg font-semibold text-slate-900 mb-2">แจ้งเตือน</h3>
+                <p id="info-modal-text" class="text-sm text-slate-500 mb-6"></p>
+                <button onclick="closeModal()" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">ตกลง</button>
+            </div>
+        </div>
+        
+        <!-- AI Feedback Modal -->
+        <div id="ai-feedback-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-2xl">
+                <h3 class="text-xl font-semibold mb-4 text-violet-700">ผู้ช่วย AI สร้าง Feedback นักเรียน</h3>
+                <div class="mb-4">
+                    <label for="ai-prompt-textarea" class="block text-sm font-medium text-slate-700 mb-1">คำสั่ง (Prompt)</label>
+                    <textarea id="ai-prompt-textarea" rows="8" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"></textarea>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                     <button id="generate-feedback-btn" class="action-btn bg-violet-500 hover:bg-violet-600 disabled:bg-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="w-5 h-5"><path d="M11.933 3.483c.193.12.383.243.57.368.188.126.37.25.552.378.85.59 1.343 1.433 1.343 2.44v.219c0 .412-.087.813-.254 1.187a.998.998 0 0 1-.94.66c-.538 0-.973-.422-1-.954-.034-.69-.2-1.352-.416-1.968-.21-.6-.48-1.14-.78-1.63a3.52 3.52 0 0 0-.276-.363c-.16-.182-.33-.353-.508-.512-.178-.159-.364-.306-.559-.443-.195-.137-.398-.264-.61-.382-.21-.118-.428-.225-.652-.321-.224-.096-.457-.18-.696-.252-.24-.072-.485-.132-.734-.18-.248-.047-.5-.082-.752-.107-.253-.025-.507-.039-.762-.042a.999.999 0 0 1-.212-.006c-.255-.003-.51.006-.765.021-.255.016-.508.04-.76.073-.252.033-.502.075-.75.124-.248.05-.494.108-.737.172-.243.065-.483.138-.72.218-.237.08-.47.166-.7.255-.228.09-.452.185-.67.283-.218.098-.433.203-.642.315-.21.112-.414.23-.612.355a4.42 4.42 0 0 0-.575.44_ 3.48 3.48 0 0 0-.51.523c-.172.2-.336.41-.49.623-.155.214-.298.434-.43.66-.133.226-.254.458-.364.697-.11.238-.208.48-.295.725-.087.244-.16.49-.222.737-.062.247-.11.496-.145.745-.035.25-.055.5-.06.75v.218c0 1.007.492 1.85 1.342 2.44.18.128.362.252.55.378.188.125.378.247.57.368.192.12.385.24.575.357.19.118.38.232.568.345.85.54 1.85.76 2.93.76s2.08-.22 2.93-.76c.188-.113.378-.227.568-.345.19-.117.383-.237.575-.357Zm-3.04.143c.18.107.356.217.528.33.172.113.34.23.504.35.68.49 1.068 1.16 1.068 1.956v.219c0 .26-.04.51-.12.74a.498.498 0 0 1-.458.34c-.27 0-.49-.22-.5-.48-.02-.4-.1-.78-.23-1.14-.13-.37-.3-.7-.5-1-.2-.3-.42-.58-.66-.82-.12-.12-.25-.23-.38-.34-.13-.11-.26-.21-.4-.3-.13-.09-.27-.17-.4-.25-.14-.08-.28-.15-.42-.21-.14-.06-.29-.11-.43-.16-.14-.05-.29-.09-.44-.12-.15-.03-.3-.06-.45-.07-.15-.01-.3-.02-.45-.02s-.3.01-.45.02c-.15.01-.3.04-.44.07-.15.03-.3.07-.44.12-.14.05-.28.1-.43.16-.14.06-.28.13-.42.2-.13.08-.27.16-.4.24-.13.09-.26.19-.39.3-.13.11-.25.22-.38.34-.24.24-.46.52-.66.82-.2.3-.37.63-.5 1-.13.36-.21.74-.23 1.14-.01.26-.23.48-.5.48a.498.498 0 0 1-.457-.34c-.08-.23-.12-.48-.12-.74v-.219c0-.796.388-1.466 1.068-1.956.164-.12.332-.237.504-.35.172-.113.348-.223.528-.33.18-.108.363-.21.54-.31.178-.1.358-.19.53-.27.175-.08.35-.15.52-.21s.34-.11.51-.15c.17-.04.34-.07.5-.09.16-.02.33-.03.5-.03s.34.01.5.03c.16.02.33.05.5.09.17.04.34.08.5.15.17.06.35.12.52.21.173.08.352.17.53.27.176.1.356.2.538.31.182.1.365.202.545.31Z"></path></svg>
+                        <span>สร้างข้อความ</span>
+                     </button>
+                     <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ปิด</button>
+                </div>
+                <div id="ai-result-area" class="mt-4 p-4 bg-slate-50 rounded-lg border min-h-[100px]">
+                    <p class="text-slate-400">ผลลัพธ์จาก AI จะแสดงที่นี่...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Manage Classes Modal -->
+        <div id="manage-classes-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+                <h3 class="text-xl font-semibold mb-4">จัดการชั้นเรียน</h3>
+                <div class="mb-4">
+                    <h4 class="font-medium text-slate-700 mb-2">รายชื่อชั้นเรียนทั้งหมด</h4>
+                    <div id="class-list-container" class="space-y-2 max-h-60 overflow-y-auto border rounded-lg p-2">
+                        <!-- Class list will be rendered here -->
+                    </div>
+                </div>
+                <form id="add-class-form" class="mt-6 border-t pt-4">
+                    <h4 class="font-medium text-slate-700 mb-2">เพิ่มชั้นเรียนใหม่</h4>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-class-name-input" class="flex-grow px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="เช่น ป.4/8" required>
+                        <button type="submit" class="action-btn bg-green-500 hover:bg-green-600">เพิ่ม</button>
+                    </div>
+                </form>
+                <div class="flex justify-end mt-6">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ปิด</button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <script>
+        // --- APPLICATION STATE ---
+        let state = {
+            currentView: 'scores',
+            currentClass: null, // e.g., '4/1'
+            classes: [], // Dynamic list of classes
+            data: {},
+            sort: {
+                key: 'total',
+                direction: 'desc'
+            }
+        };
+
+        // --- DOM ELEMENTS ---
+        const mainNav = document.getElementById('main-nav');
+        const classSelector = document.getElementById('class-selector');
+        const views = {
+            scores: document.getElementById('scores-view'),
+            students: document.getElementById('students-view'),
+            summary: document.getElementById('summary-view'),
+            ai: document.getElementById('ai-view'),
+        };
+        const welcomeMessage = document.getElementById('welcome-message');
+        const modalContainer = document.getElementById('modal-container');
+
+        // --- DATA PERSISTENCE (using localStorage) ---
+        function saveData() {
+            localStorage.setItem('scienceScoreClasses', JSON.stringify(state.classes));
+            localStorage.setItem('scienceScoreData', JSON.stringify(state.data));
+            showToast('บันทึกข้อมูลสำเร็จแล้ว');
+        }
+
+        function loadData() {
+            // Load the list of classes
+            const savedClasses = localStorage.getItem('scienceScoreClasses');
+            if (savedClasses && JSON.parse(savedClasses).length > 0) {
+                state.classes = JSON.parse(savedClasses);
+            } else {
+                state.classes = ['ป.4/1', 'ป.4/2'];
+            }
+
+            // Load the score data
+            const savedData = localStorage.getItem('scienceScoreData');
+            if (savedData) {
+                state.data = JSON.parse(savedData);
+            } else {
+                // Initialize with sample data if nothing is saved
+                state.data = {
+                    'ป.4/1': {
+                        students: [
+                            { id: 1, number: 1, name: 'เด็กชายกวิน ทองดี' },
+                            { id: 2, number: 2, name: 'เด็กหญิงขวัญข้าว มีชัย' },
+                            { id: 3, number: 3, name: 'เด็กชายจิรายุ แสงจันทร์' },
+                            { id: 4, number: 4, name: 'เด็กหญิงชลดา รักไทย' },
+                            { id: 5, number: 5, name: 'เด็กชายณัฐพงศ์ ศรีสุวรรณ' },
+                            { id: 6, number: 6, name: 'เด็กหญิงทิพวรรณ ใจงาม' },
+                            { id: 7, number: 7, name: 'เด็กชายธนากร วงศ์ษา' },
+                            { id: 8, number: 8, name: 'เด็กหญิงนภัสสร บุญมา' },
+                            { id: 9, number: 9, name: 'เด็กชายบวรศักดิ์ จันทะสอน' },
+                            { id: 10, number: 10, name: 'เด็กหญิงปภาวรินท์ ศรีเมือง' },
+                            { id: 11, number: 11, name: 'เด็กชายพงศกร แก้วใส' },
+                            { id: 12, number: 12, name: 'เด็กหญิงภัทรวดี อินทร์ใจเอื้อ' },
+                            { id: 13, number: 13, name: 'เด็กชายเมธัส ธรรมดี' },
+                            { id: 14, number: 14, name: 'เด็กหญิงรุจิรา สุขเกษม' },
+                            { id: 15, number: 15, name: 'เด็กชายวรเมธ ศิลาชัย' },
+                            { id: 16, number: 16, name: 'เด็กหญิงศศิธร อ่อนโยน' },
+                            { id: 17, number: 17, name: 'เด็กชายสุรศักดิ์ มณีวรรณ' },
+                            { id: 18, number: 18, name: 'เด็กหญิงอภิญญา ชัยชนะ' },
+                            { id: 19, number: 19, name: 'เด็กชายเอกภาพ ทองคำ' },
+                            { id: 20, number: 20, name: 'เด็กหญิงกัญญาณัฐ จิตต์มั่นคง' },
+                            { id: 21, number: 21, name: 'เด็กชายคณิน ชอบทำบุญ' },
+                            { id: 22, number: 22, name: 'เด็กหญิงจันทิมา ศรีสะอาด' },
+                            { id: 23, number: 23, name: 'เด็กชายชินวัฒน์ เดชบดินทร์' },
+                            { id: 24, number: 24, name: 'เด็กหญิงฐิติมา พรสวรรค์' },
+                            { id: 25, number: 25, name: 'เด็กชายณรงค์ฤทธิ์ ปัญญาวงศ์' },
+                            { id: 26, number: 26, name: 'เด็กหญิงธัญชนก เจริญสุข' },
+                            { id: 27, number: 27, name: 'เด็กชายนพรัตน์ แสงสว่าง' },
+                            { id: 28, number: 28, name: 'เด็กหญิงบุญสิตา มงคลชัย' },
+                            { id: 29, number: 29, name: 'เด็กชายประเสริฐ เลิศล้ำ' },
+                            { id: 30, number: 30, name: 'เด็กหญิงพิมพกานต์ งามวิไล' },
+                            { id: 31, number: 31, name: 'เด็กชายพีรพล บุญเกิด' },
+                            { id: 32, number: 32, name: 'เด็กหญิงมัลลิกา มาลาหอม' },
+                            { id: 33, number: 33, name: 'เด็กชายยศกร อุดมทรัพย์' },
+                            { id: 34, number: 34, name: 'เด็กหญิงลลิตา อำไพ' },
+                            { id: 35, number: 35, name: 'เด็กชายวิทวัส กิจเจริญ' },
+                            { id: 36, number: 36, name: 'เด็กหญิงสิริมาพร ตั้งใจเรียน' },
+                            { id: 37, number: 37, name: 'เด็กชายอานนท์ ผลดี' },
+                            { id: 38, number: 38, name: 'เด็กหญิงอุไรวรรณ กตัญญู' },
+                            { id: 39, number: 39, name: 'เด็กชายจักรพงษ์ จิตดี' },
+                            { id: 40, number: 40, name: 'เด็กหญิงฉัตรสุดา พัฒนา' },
+                            { id: 41, number: 41, name: 'เด็กชายเชษฐา สุขใจ' },
+                            { id: 42, number: 42, name: 'เด็กหญิงฑิฆัมพร เจริญผล' },
+                            { id: 43, number: 43, name: 'เด็กชายณภัทร มั่นคง' },
+                            { id: 44, number: 44, name: 'เด็กหญิงธิดารัตน์ ศรีไพร' },
+                            { id: 45, number: 45, name: 'เด็กชายนิธิศ ศุภโชค' },
+                            { id: 46, number: 46, name: 'เด็กหญิงเบญจวรรณ เรืองเดช' },
+                            { id: 47, number: 47, name: 'เด็กชายปรีชา สามารถ' },
+                            { id: 48, number: 48, name: 'เด็กหญิงผกามาศ บัวงาม' },
+                            { id: 49, number: 49, name: 'เด็กชายพรเทพ อมรสิน' },
+                            { id: 50, number: 50, name: 'เด็กหญิงภัทราพร สมบัติ' },
+                        ],
+                        scoreItems: [
+                            { name: 'ความรู้พื้นฐานทางวิทยาศาสตร์', max: 10 },
+                            { name: 'ทดลองเรื่องพืช', max: 15 },
+                            { name: 'สอบกลางภาค', max: 25 },
+                        ],
+                        scores: {},
+                    },
+                    'ป.4/2': { students: [], scoreItems: [], scores: {} }
+                };
+                saveData(); // Save initial sample data if it's the first time
+            }
+            
+            // Ensure data object exists for every class in the list
+            state.classes.forEach(className => {
+                if (!state.data[className]) {
+                    state.data[className] = { students: [], scoreItems: [], scores: {} };
+                }
+            });
+        }
+        
+        // --- UTILITY & HELPER FUNCTIONS ---
+        function getNextStudentId() {
+            let maxId = 0;
+            Object.values(state.data).forEach(classData => {
+                if (classData && classData.students) {
+                    classData.students.forEach(s => {
+                        if (s.id > maxId) maxId = s.id;
+                    });
+                }
+            });
+            return maxId + 1;
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-5 right-5 bg-green-600 text-white px-5 py-3 rounded-lg shadow-xl animate-bounce';
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function calculateTotalScore(studentId, classData) {
+            if (!classData || !classData.scores) return 0;
+            const studentScores = classData.scores[studentId] || {};
+            return Object.values(studentScores).reduce((sum, score) => sum + (Number(score) || 0), 0);
+        }
+        
+        // --- MODAL HANDLING ---
+        let currentModalId = null;
+        let deleteCallback = null;
+
+        function openModal(modalId, setupFn = null) {
+            currentModalId = modalId;
+            modalContainer.querySelectorAll('.fixed').forEach(m => m.classList.add('hidden'));
+            const modal = document.getElementById(modalId);
+            if (setupFn) setupFn();
+            modalContainer.classList.remove('hidden');
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            if (currentModalId) {
+                const modal = document.getElementById(currentModalId);
+                modal.classList.add('hidden');
+            }
+            modalContainer.classList.add('hidden');
+            currentModalId = null;
+            deleteCallback = null;
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function render() {
+            renderClassSelector();
+            renderNav();
+            if (state.currentClass) {
+                welcomeMessage.classList.add('hidden');
+                renderCurrentView();
+            } else {
+                welcomeMessage.classList.remove('hidden');
+                Object.values(views).forEach(v => { v.innerHTML = ''; v.classList.add('hidden'); });
+            }
+        }
+
+        function renderNav() {
+            mainNav.querySelectorAll('.nav-button').forEach(button => {
+                button.classList.remove('active-nav');
+                if (button.dataset.view === state.currentView) {
+                    button.classList.add('active-nav');
+                }
+            });
+        }
+        
+        function renderClassSelector() {
+            classSelector.innerHTML = '';
+            if (state.classes.length === 0) {
+                 classSelector.innerHTML = `<p class="text-slate-500 text-sm">ไม่มีชั้นเรียน กรุณาเพิ่มชั้นเรียนโดยกดปุ่ม 'จัดการชั้นเรียน'</p>`;
+                 return;
+            }
+            state.classes.forEach(className => {
+                const button = document.createElement('button');
+                button.textContent = `${className}`;
+                button.dataset.class = className;
+                button.className = `px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base ${state.currentClass === className ? 'bg-green-500 text-white shadow-md scale-105' : 'bg-green-100 text-green-800 hover:bg-green-200'}`;
+                classSelector.appendChild(button);
+            });
+        }
+        
+        function renderCurrentView() {
+            // If there's no class selected, do nothing
+            if (!state.currentClass || !state.data[state.currentClass]) {
+                welcomeMessage.classList.remove('hidden');
+                Object.values(views).forEach(v => { v.innerHTML = ''; v.classList.add('hidden'); });
+                return;
+            }
+            
+            Object.entries(views).forEach(([viewName, viewElement]) => {
+                if (viewName === state.currentView) {
+                    viewElement.classList.remove('hidden');
+                    if (viewName === 'scores') renderScoresView();
+                    else if (viewName === 'students') renderStudentsView();
+                    else if (viewName === 'summary') renderSummaryView();
+                    else if (viewName === 'ai') renderAiView();
+                } else {
+                    viewElement.classList.add('hidden');
+                }
+            });
+        }
+        
+        // --- SPECIFIC VIEW RENDERERS ---
+
+        function renderStudentsView() {
+            const classData = state.data[state.currentClass];
+            const view = views.students;
+            const studentList = [...classData.students].sort((a,b) => a.number - b.number);
+            view.innerHTML = `
+                <div class="bg-white rounded-xl shadow-md p-4 md:p-6">
+                    <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                        <h2 class="text-xl font-semibold text-slate-800">จัดการรายชื่อนักเรียน ชั้น ${state.currentClass} (${studentList.length} คน)</h2>
+                        <div class="flex gap-2">
+                            <button id="import-btn" class="action-btn bg-blue-500 hover:bg-blue-600">
+                                <span>เพิ่มจาก Excel</span>
+                            </button>
+                            <button id="add-student-btn" class="action-btn bg-green-500 hover:bg-green-600">
+                                <span>เพิ่มรายชื่อ</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="table-header w-20">เลขที่</th>
+                                    <th class="table-header text-left">ชื่อ-นามสกุล</th>
+                                    <th class="table-header w-40">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${studentList.length > 0 ? studentList.map(s => `
+                                    <tr class="border-b border-slate-200">
+                                        <td class="table-cell text-center">${s.number}</td>
+                                        <td class="table-cell">${s.name}</td>
+                                        <td class="table-cell text-center">
+                                            <button onclick="handleEditStudent(${s.id})" class="edit-btn">แก้ไข</button>
+                                            <button onclick="handleDeleteStudent(${s.id})" class="delete-btn">ลบ</button>
+                                        </td>
+                                    </tr>
+                                `).join('') : `<tr><td colspan="3" class="text-center p-8 text-slate-400">ยังไม่มีข้อมูลนักเรียน</td></tr>`}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+            view.querySelector('#add-student-btn').addEventListener('click', () => {
+                openModal('student-modal', () => {
+                    document.getElementById('student-modal-title').textContent = 'เพิ่มรายชื่อนักเรียน';
+                    document.getElementById('student-form').reset();
+                    document.getElementById('student-id-input').value = '';
+                });
+            });
+            view.querySelector('#import-btn').addEventListener('click', () => {
+                openModal('excel-modal', () => {
+                    document.getElementById('excel-file-input').value = '';
+                    document.getElementById('excel-mapping-area').classList.add('hidden');
+                    document.getElementById('import-excel-btn').disabled = true;
+                });
+            });
+        }
+
+        function renderScoresView() {
+            const classData = state.data[state.currentClass];
+            const view = views.scores;
+            const studentList = [...classData.students].sort((a,b) => a.number - b.number);
+            view.innerHTML = `
+                <div class="bg-white rounded-xl shadow-md p-4 md:p-6">
+                    <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                        <h2 class="text-xl font-semibold text-slate-800">บันทึกคะแนน ชั้น ${state.currentClass}</h2>
+                        <div class="flex gap-2">
+                            <button id="add-item-btn" class="action-btn bg-cyan-500 hover:bg-cyan-600">
+                                <span>เพิ่มรายการคะแนน</span>
+                            </button>
+                            <button id="save-scores-btn" class="action-btn bg-green-500 hover:bg-green-600">
+                                <span>บันทึกข้อมูล</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white" id="score-table">
+                            <thead>
+                                <tr class="bg-slate-50">
+                                    <th class="table-header w-16">เลขที่</th>
+                                    <th class="table-header text-left min-w-[200px]">ชื่อ-นามสกุล</th>
+                                    ${classData.scoreItems.map(item => `<th class="table-header text-center min-w-[150px] group relative">${item.name}<br><span class="text-xs font-normal text-slate-500">(เต็ม ${item.max})</span><button onclick="deleteScoreItem('${item.name}')" class="absolute top-1 right-1 bg-red-100 text-red-500 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg></button></th>`).join('')}
+                                    <th class="table-header w-28 bg-green-50">คะแนนรวม</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${studentList.length > 0 ? studentList.map(s => `
+                                    <tr class="border-b border-slate-200">
+                                        <td class="table-cell text-center font-medium">${s.number}</td>
+                                        <td class="table-cell">${s.name}</td>
+                                        ${classData.scoreItems.map(item => `
+                                            <td class="table-cell text-center p-1">
+                                                <input type="number" data-student-id="${s.id}" data-item-name="${item.name}" 
+                                                value="${classData.scores[s.id]?.[item.name] || ''}" 
+                                                max="${item.max}" min="0" 
+                                                class="w-20 text-center border rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-green-400">
+                                            </td>
+                                        `).join('')}
+                                        <td id="total-score-${s.id}" class="table-cell text-center font-bold text-green-700 bg-green-50">${calculateTotalScore(s.id, classData)}</td>
+                                    </tr>
+                                `).join('') : `<tr><td colspan="${2 + classData.scoreItems.length + 1}" class="text-center p-8 text-slate-400">ยังไม่มีข้อมูลนักเรียน</td></tr>`}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+            view.querySelector('#add-item-btn').addEventListener('click', () => {
+                openModal('item-modal', () => document.getElementById('item-form').reset());
+            });
+            view.querySelector('#save-scores-btn').addEventListener('click', handleSaveScores);
+            view.querySelectorAll('#score-table input[type="number"]').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const studentId = e.target.dataset.studentId;
+                    const studentRow = e.target.closest('tr');
+                    const totalCell = studentRow.querySelector(`#total-score-${studentId}`);
+                    let currentTotal = 0;
+                    studentRow.querySelectorAll('input[type="number"]').forEach(inp => {
+                       currentTotal += Number(inp.value) || 0;
+                    });
+                    totalCell.textContent = currentTotal;
+                });
+            });
+        }
+
+        function renderSummaryView() {
+            const classData = state.data[state.currentClass];
+            const view = views.summary;
+            const summaryData = classData.students.map(s => ({
+                ...s,
+                total: calculateTotalScore(s.id, classData)
+            })).sort((a, b) => {
+                const valA = a[state.sort.key];
+                const valB = b[state.sort.key];
+                if (state.sort.direction === 'asc') return valA - valB;
+                return valB - valA;
+            });
+
+            view.innerHTML = `
+                <div class="bg-white rounded-xl shadow-md p-4 md:p-6">
+                    <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                        <h2 class="text-xl font-semibold text-slate-800">สรุปรวมคะแนน ชั้น ${state.currentClass}</h2>
+                        <button id="export-excel-btn" class="action-btn bg-emerald-500 hover:bg-emerald-600">
+                            <span>ส่งออกเป็น Excel</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="table-header w-24">ลำดับที่</th>
+                                    <th class="table-header w-24">เลขที่</th>
+                                    <th class="table-header text-left">ชื่อ-นามสกุล</th>
+                                    <th class="table-header w-40 cursor-pointer" id="sort-total-btn">
+                                        คะแนนรวม <span>${state.sort.key === 'total' ? (state.sort.direction === 'desc' ? '▼' : '▲') : ''}</span>
+                                    </th>
+                                    <th class="table-header w-20">AI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${summaryData.length > 0 ? summaryData.map((s, index) => `
+                                    <tr class="border-b border-slate-200">
+                                        <td class="table-cell text-center">${index + 1}</td>
+                                        <td class="table-cell text-center">${s.number}</td>
+                                        <td class="table-cell">${s.name}</td>
+                                        <td class="table-cell text-center font-bold text-lg ${s.total > 25 ? 'text-green-600' : 'text-orange-500'}">${s.total}</td>
+                                        <td class="table-cell text-center">
+                                            <button onclick="generateFeedbackForStudent(${s.id})" class="ai-btn" title="สร้าง Feedback ด้วย AI">✨ AI</button>
+                                        </td>
+                                    </tr>
+                                `).join('') : `<tr><td colspan="5" class="text-center p-8 text-slate-400">ยังไม่มีข้อมูลนักเรียน</td></tr>`}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+            view.querySelector('#export-excel-btn').addEventListener('click', handleExportToExcel);
+            view.querySelector('#sort-total-btn').addEventListener('click', handleSortSummary);
+        }
+        
+        function renderAiView() {
+            const view = views.ai;
+            view.innerHTML = `
+                <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-center">
+                    <h2 class="text-2xl font-semibold text-slate-800 mb-2">ผู้ช่วย AI (Gemini)</h2>
+                    <p class="text-slate-500 mb-4">เครื่องมือช่วยคุณครูสร้างสรรค์สื่อการสอนและข้อเสนอแนะสำหรับนักเรียน</p>
+                    <div class="p-6 bg-violet-50 border border-violet-200 rounded-lg">
+                        <h3 class="font-semibold text-violet-700">วิธีใช้งาน</h3>
+                        <p class="text-slate-600 mt-1">ไปที่หน้า <span class="font-medium text-violet-600">📊 สรุปรวมคะแนน</span> และคลิกปุ่ม <span class="font-medium text-violet-600">✨ AI</span> ที่ท้ายแถวของนักเรียนที่ต้องการ เพื่อสร้างข้อเสนอแนะ (Feedback) อัตโนมัติ</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- EVENT HANDLERS ---
+        function handleNavClick(e) {
+            if (e.target.matches('.nav-button')) {
+                state.currentView = e.target.dataset.view;
+                render();
+            }
+        }
+
+        function handleClassClick(e) {
+            if (e.target.matches('[data-class]')) {
+                state.currentClass = e.target.dataset.class;
+                render();
+            }
+        }
+        
+        document.getElementById('student-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('student-id-input').value;
+            const number = document.getElementById('student-number-input').value;
+            const name = document.getElementById('student-name-input').value;
+            const classData = state.data[state.currentClass];
+            if (id) {
+                const student = classData.students.find(s => s.id == id);
+                if (student) { student.number = parseInt(number); student.name = name; }
+            } else {
+                classData.students.push({ id: getNextStudentId(), number: parseInt(number), name: name });
+            }
+            saveData();
+            renderStudentsView();
+            closeModal();
+        });
+
+        function handleEditStudent(studentId) {
+            const student = state.data[state.currentClass].students.find(s => s.id === studentId);
+            if (student) {
+                openModal('student-modal', () => {
+                    document.getElementById('student-modal-title').textContent = 'แก้ไขรายชื่อนักเรียน';
+                    document.getElementById('student-id-input').value = student.id;
+                    document.getElementById('student-number-input').value = student.number;
+                    document.getElementById('student-name-input').value = student.name;
+                });
+            }
+        }
+
+        function handleDeleteStudent(studentId) {
+            const student = state.data[state.currentClass].students.find(s => s.id === studentId);
+            if(student) {
+                openModal('confirm-delete-modal', () => {
+                    document.getElementById('delete-modal-title').textContent = 'ยืนยันการลบนักเรียน';
+                    document.getElementById('delete-modal-text').textContent = `คุณต้องการลบ '${student.name}' ออกจากระบบใช่หรือไม่? ข้อมูลคะแนนทั้งหมดของนักเรียนคนนี้จะถูกลบไปด้วย`;
+                    deleteCallback = () => {
+                        const classData = state.data[state.currentClass];
+                        classData.students = classData.students.filter(s => s.id !== studentId);
+                        delete classData.scores[studentId];
+                        saveData();
+                        renderStudentsView();
+                        closeModal();
+                    };
+                });
+            }
+        }
+        
+        function deleteScoreItem(itemName) {
+            openModal('confirm-delete-modal', () => {
+                document.getElementById('delete-modal-title').textContent = 'ยืนยันการลบรายการคะแนน';
+                document.getElementById('delete-modal-text').textContent = `คุณต้องการลบรายการคะแนน '${itemName}' ใช่หรือไม่? คะแนนทั้งหมดในรายการนี้จะถูกลบออกไป`;
+                deleteCallback = () => {
+                    const classData = state.data[state.currentClass];
+                    classData.scoreItems = classData.scoreItems.filter(item => item.name !== itemName);
+                    Object.keys(classData.scores).forEach(studentId => {
+                        delete classData.scores[studentId][itemName];
+                    });
+                    saveData();
+                    renderScoresView();
+                    closeModal();
+                };
+            });
+        }
+        
+        document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+            if (deleteCallback) deleteCallback();
+        });
+
+        document.getElementById('item-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('item-name-input').value;
+            const max = document.getElementById('item-max-score-input').value;
+            const classData = state.data[state.currentClass];
+            if (classData.scoreItems.some(item => item.name === name)) {
+                openModal('info-modal', () => {
+                    document.getElementById('info-modal-title').textContent = 'ข้อมูลซ้ำซ้อน';
+                    document.getElementById('info-modal-text').textContent = 'มีชื่อรายการคะแนนนี้ในระบบแล้ว กรุณาใช้ชื่ออื่น';
+                });
+                return;
+            }
+            classData.scoreItems.push({ name: name, max: parseInt(max) });
+            saveData();
+            renderScoresView();
+            closeModal();
+        });
+
+        function handleSaveScores() {
+            const classData = state.data[state.currentClass];
+            document.querySelectorAll('#score-table input[type="number"]').forEach(input => {
+                const studentId = input.dataset.studentId;
+                const itemName = input.dataset.itemName;
+                const score = input.value;
+                if (!classData.scores[studentId]) { classData.scores[studentId] = {}; }
+                classData.scores[studentId][itemName] = score === '' ? null : Number(score);
+            });
+            saveData();
+        }
+
+        function handleSortSummary() {
+            state.sort.direction = state.sort.direction === 'desc' ? 'asc' : 'desc';
+            renderSummaryView();
+        }
+        
+        // --- EXCEL FUNCTIONALITY ---
+        let excelData = { headers: [], rows: [] };
+        document.getElementById('excel-file-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                excelData.headers = json[0] || [];
+                excelData.rows = json.slice(1);
+                const numberSelect = document.getElementById('excel-map-number');
+                const nameSelect = document.getElementById('excel-map-name');
+                numberSelect.innerHTML = excelData.headers.map((h, i) => `<option value="${i}">${h}</option>`).join('');
+                nameSelect.innerHTML = excelData.headers.map((h, i) => `<option value="${i}">${h}</option>`).join('');
+                const previewHeader = document.getElementById('excel-preview-header');
+                const previewBody = document.getElementById('excel-preview-body');
+                previewHeader.innerHTML = `<tr>${excelData.headers.map(h => `<th class="p-2 font-medium text-left">${h}</th>`).join('')}</tr>`;
+                previewBody.innerHTML = excelData.rows.slice(0, 5).map(row => `<tr>${row.map(cell => `<td class="p-2 border-t">${cell}</td>`).join('')}</tr>`).join('');
+                document.getElementById('excel-mapping-area').classList.remove('hidden');
+                document.getElementById('import-excel-btn').disabled = false;
+            };
+            reader.readAsArrayBuffer(file);
+        });
+        document.getElementById('import-excel-btn').addEventListener('click', () => {
+            const numberIndex = document.getElementById('excel-map-number').value;
+            const nameIndex = document.getElementById('excel-map-name').value;
+            const classData = state.data[state.currentClass];
+            excelData.rows.forEach(row => {
+                const number = row[numberIndex];
+                const name = row[nameIndex];
+                if (number && name && !classData.students.some(s => s.number == number)) {
+                    classData.students.push({ id: getNextStudentId(), number: parseInt(number), name: name });
+                }
+            });
+            saveData();
+            renderStudentsView();
+            closeModal();
+        });
+
+        function handleExportToExcel() {
+            const classData = state.data[state.currentClass];
+            const exportData = classData.students.map(s => ({
+                'เลขที่': s.number,
+                'ชื่อ-นามสกุล': s.name,
+                ...classData.scoreItems.reduce((acc, item) => {
+                    acc[item.name] = classData.scores[s.id]?.[item.name] || 0;
+                    return acc;
+                }, {}),
+                'คะแนนรวม': calculateTotalScore(s.id, classData)
+            })).sort((a,b) => a['เลขที่'] - b['เลขที่']);
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            const sanitizedClassName = state.currentClass.replace(/[\/\\?*[\]:]/g, '-');
+            const sheetName = `คะแนน ${sanitizedClassName}`;
+            XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+            XLSX.writeFile(workbook, `สรุปคะแนน_${sanitizedClassName}.xlsx`);
+        }
+        
+        // --- GEMINI AI FUNCTIONALITY ---
+        async function callGeminiAPI(prompt) {
+            const resultArea = document.getElementById('ai-result-area');
+            const generateBtn = document.getElementById('generate-feedback-btn');
+            resultArea.innerHTML = '<p class="text-slate-500 animate-pulse">กำลังประมวลผล โปรดรอสักครู่...</p>';
+            generateBtn.disabled = true;
+
+            try {
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // API Key is provided by the execution environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) { throw new Error(`API Error: ${response.status} ${response.statusText}`); }
+                const result = await response.json();
+
+                if (result.candidates?.[0]?.content?.parts?.[0]) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
+                    resultArea.innerHTML = `<div class="prose prose-sm max-w-none text-left">${formattedText}</div>`;
+                } else {
+                    throw new Error("Invalid response structure from API.");
+                }
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                resultArea.innerHTML = `<p class="text-red-500">เกิดข้อผิดพลาดในการเรียกใช้ AI: ${error.message}</p>`;
+            } finally {
+                generateBtn.disabled = false;
+            }
+        }
+
+        function generateFeedbackForStudent(studentId) {
+            const classData = state.data[state.currentClass];
+            const student = classData.students.find(s => s.id === studentId);
+            if (!student) return;
+            const studentScores = classData.scores[studentId] || {};
+            let scoreDetails = classData.scoreItems.map(item => `- ${item.name}: ได้ ${studentScores[item.name] || 0} จาก ${item.max} คะแนน`).join('\n');
+            if (classData.scoreItems.length === 0) { scoreDetails = "ยังไม่มีการบันทึกคะแนน"; }
+            const totalScore = calculateTotalScore(studentId, classData);
+            const maxTotalScore = classData.scoreItems.reduce((sum, item) => sum + item.max, 0);
+            const prompt = `ในฐานะผู้ช่วยครูวิชาวิทยาศาสตร์, กรุณาเขียนข้อเสนอแนะสั้นๆ (feedback) สำหรับนักเรียนชั้นประถมศึกษาปีที่ 4 ชื่อ "${student.name}" โดยพิจารณาจากผลคะแนนต่อไปนี้:\n\n${scoreDetails}\n\nคะแนนรวม: ${totalScore} จาก ${maxTotalScore} คะแนน\n\nโปรดเขียนในเชิงบวกและสร้างสรรค์ โดยมีโครงสร้างดังนี้:\n1. **จุดที่ทำได้ดี:** ชมเชยในหัวข้อที่นักเรียนได้คะแนนสูง\n2. **จุดที่ควรพัฒนา:** แนะนำหัวข้อที่นักเรียนควรทบทวนเพิ่มเติมอย่างเป็นมิตร\n3. **สรุปและให้กำลังใจ:** กล่าวให้กำลังใจเพื่อการเรียนรู้ต่อไป`;
+
+            openModal('ai-feedback-modal', () => {
+                document.getElementById('ai-prompt-textarea').value = prompt;
+                document.getElementById('ai-result-area').innerHTML = '<p class="text-slate-400">ผลลัพธ์จาก AI จะแสดงที่นี่...</p>';
+            });
+        }
+
+        // --- NEW: CLASS MANAGEMENT ---
+        function renderManageClassesModal() {
+            const container = document.getElementById('class-list-container');
+            container.innerHTML = '';
+            if (state.classes.length > 0) {
+                state.classes.forEach(className => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center bg-slate-100 p-2 rounded-md';
+                    div.innerHTML = `
+                        <span class="font-medium">${className}</span>
+                        <button onclick="handleDeleteClass('${className}')" class="delete-btn text-xs">ลบ</button>
+                    `;
+                    container.appendChild(div);
+                });
+            } else {
+                container.innerHTML = '<p class="text-slate-400 text-center p-4">ไม่มีชั้นเรียน</p>';
+            }
+        }
+        
+        function handleAddClass(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-class-name-input');
+            const newClassName = input.value.trim();
+            if (!newClassName) {
+                openModal('info-modal', () => {
+                    document.getElementById('info-modal-title').textContent = 'ข้อมูลไม่ถูกต้อง';
+                    document.getElementById('info-modal-text').textContent = 'กรุณากรอกชื่อชั้นเรียน';
+                });
+                return;
+            }
+            if (state.classes.includes(newClassName)) {
+                openModal('info-modal', () => {
+                    document.getElementById('info-modal-title').textContent = 'ข้อมูลซ้ำซ้อน';
+                    document.getElementById('info-modal-text').textContent = 'มีชื่อชั้นเรียนนี้ในระบบแล้ว';
+                });
+                return;
+            }
+            state.classes.push(newClassName);
+            state.data[newClassName] = { students: [], scoreItems: [], scores: {} };
+            saveData();
+            renderManageClassesModal(); // Re-render the list inside the modal
+            renderClassSelector(); // Re-render the main class selector buttons
+            input.value = '';
+        }
+
+        function handleDeleteClass(className) {
+            openModal('confirm-delete-modal', () => {
+                document.getElementById('delete-modal-title').textContent = 'ยืนยันการลบชั้นเรียน';
+                document.getElementById('delete-modal-text').textContent = `คุณต้องการลบชั้นเรียน '${className}' ใช่หรือไม่? ข้อมูลทั้งหมดของชั้นเรียนนี้จะถูกลบอย่างถาวร`;
+                deleteCallback = () => {
+                    state.classes = state.classes.filter(c => c !== className);
+                    delete state.data[className];
+
+                    if (state.currentClass === className) {
+                        state.currentClass = null;
+                    }
+                    
+                    saveData();
+                    render(); // Full re-render to update everything
+                    closeModal();
+                    // Re-open manage modal to show updated list
+                    openModal('manage-classes-modal', renderManageClassesModal);
+                };
+            });
+        }
+        
+        // --- INITIALIZATION ---
+        function init() {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .nav-button { @apply px-4 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-100 transition-colors; }
+                .active-nav { @apply bg-green-500 text-white hover:bg-green-500 shadow; }
+                .action-btn { @apply flex items-center justify-center gap-2 px-3 py-2 text-white rounded-lg font-semibold shadow-sm transition-all text-sm; }
+                .table-header { @apply px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider; }
+                .table-cell { @apply px-3 py-3 whitespace-nowrap; }
+                .edit-btn { @apply px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-md hover:bg-yellow-200; }
+                .delete-btn { @apply px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-md hover:bg-red-200; }
+                .ai-btn { @apply px-2 py-1 bg-violet-100 text-violet-800 text-sm font-medium rounded-md hover:bg-violet-200 transition-colors; }
+            `;
+            document.head.appendChild(style);
+            
+            loadData();
+            mainNav.addEventListener('click', handleNavClick);
+            classSelector.addEventListener('click', handleClassClick);
+            document.getElementById('generate-feedback-btn').addEventListener('click', () => {
+                const prompt = document.getElementById('ai-prompt-textarea').value;
+                callGeminiAPI(prompt);
+            });
+            document.getElementById('manage-classes-btn').addEventListener('click', () => {
+                openModal('manage-classes-modal', renderManageClassesModal);
+            });
+            document.getElementById('add-class-form').addEventListener('submit', handleAddClass);
+
+            render();
+        }
+
+        init();
+    </script>
+</body>
+</html>
