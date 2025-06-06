@@ -55,88 +55,117 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <!-- Main Container -->
-    <div class="min-h-screen flex flex-col">
-
-        <!-- Header -->
-        <header class="bg-gradient-to-b from-green-100 to-white shadow-sm p-4 md:p-6">
-            <div class="container mx-auto flex flex-col md:flex-row items-center gap-4">
-                <img src="https://i.postimg.cc/8PsYLzFr/51101210-0-20240105-144051.png" alt="School Logo" class="w-[100px] h-auto">
-                <div class="text-center md:text-left">
-                    <h1 class="text-xl md:text-2xl font-bold text-green-700">ระบบบันทึกคะแนนเก็บ วิชาคณิตศาสตร์ รหัสวิชา ส101</h1>
-                    <p class="text-sm md:text-base text-slate-600 font-medium">ห้องเรียนครู aaaaaaaaaa</p>
-                    <p class="text-xs md:text-sm text-slate-500">โรงเรียนอนุบาลภูคำเบ้า สำนักงานเขตพื้นที่การศึกษาประถมศึกษาขอนแก่น เขต 1</p>
-                </div>
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-slate-50 p-4">
+        <div class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl">
+            <div class="text-center mb-6">
+                 <img src="https://i.postimg.cc/8PsYLzFr/51101210-0-20240105-144051.png" alt="School Logo" class="w-24 h-auto mx-auto mb-4">
+                 <h2 class="text-2xl font-bold text-green-700">เข้าสู่ระบบ</h2>
+                 <p class="text-slate-500">สำหรับคุณครูผู้สอน</p>
             </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="flex-grow container mx-auto p-4 md:p-6">
-            
-            <!-- Navigation and Class Selection -->
-            <div class="bg-white p-4 rounded-xl shadow-md mb-6">
-                <!-- Main Menu Tabs -->
+            <form id="login-form">
                 <div class="mb-4">
-                    <h2 class="text-lg font-semibold mb-2 text-slate-700">เมนูหลัก</h2>
-                    <div id="main-nav" class="flex flex-wrap gap-2 border-b-2 border-slate-100 pb-4">
-                        <button data-view="scores" class="nav-button active-nav">📝 บันทึกคะแนน</button>
-                        <button data-view="students" class="nav-button">👥 จัดการรายชื่อนักเรียน</button>
-                        <button data-view="summary" class="nav-button">📊 สรุปรวมคะแนน</button>
-                        <button data-view="ai" class="nav-button">✨ ผู้ช่วย AI</button>
+                    <label for="username-input" class="block text-sm font-medium text-slate-700 mb-1">ชื่อผู้ใช้</label>
+                    <input type="text" id="username-input" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password-input" class="block text-sm font-medium text-slate-700 mb-1">รหัสผ่าน</label>
+                    <input type="password" id="password-input" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                </div>
+                <p id="login-error" class="text-red-500 text-sm text-center mb-4 h-5"></p>
+                <button type="submit" class="w-full bg-green-500 text-white py-2.5 rounded-lg font-semibold hover:bg-green-600 transition-colors shadow-md">เข้าสู่ระบบ</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application Container (hidden by default) -->
+    <div id="app-container" class="hidden">
+        <!-- Main Container -->
+        <div class="min-h-screen flex flex-col">
+    
+            <!-- Header -->
+            <header class="bg-gradient-to-b from-green-100 to-white shadow-sm p-4 md:p-6">
+                <div class="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <img src="https://i.postimg.cc/8PsYLzFr/51101210-0-20240105-144051.png" alt="School Logo" class="w-[100px] h-auto">
+                        <div class="text-center md:text-left">
+                            <h1 class="text-xl md:text-2xl font-bold text-green-700">ระบบบันทึกคะแนนเก็บ วิชาคณิตศาสตร์ รหัสวิชา ส101</h1>
+                            <p class="text-sm md:text-base text-slate-600 font-medium">ห้องเรียนครู aaaaaaaaaa</p>
+                            <p class="text-xs md:text-sm text-slate-500">โรงเรียนอนุบาลภูคำเบ้า สำนักงานเขตพื้นที่การศึกษาประถมศึกษาขอนแก่น เขต 1</p>
+                        </div>
+                    </div>
+                    <button id="logout-btn" class="action-btn bg-red-500 hover:bg-red-600">ออกจากระบบ</button>
+                </div>
+            </header>
+    
+            <!-- Main Content -->
+            <main class="flex-grow container mx-auto p-4 md:p-6">
+                
+                <!-- Navigation and Class Selection -->
+                <div class="bg-white p-4 rounded-xl shadow-md mb-6">
+                    <!-- Main Menu Tabs -->
+                    <div class="mb-4">
+                        <h2 class="text-lg font-semibold mb-2 text-slate-700">เมนูหลัก</h2>
+                        <div id="main-nav" class="flex flex-wrap gap-2 border-b-2 border-slate-100 pb-4">
+                            <button data-view="scores" class="nav-button active-nav">📝 บันทึกคะแนน</button>
+                            <button data-view="students" class="nav-button">👥 จัดการรายชื่อนักเรียน</button>
+                            <button data-view="summary" class="nav-button">📊 สรุปรวมคะแนน</button>
+                            <button data-view="ai" class="nav-button">✨ ผู้ช่วย AI</button>
+                        </div>
+                    </div>
+    
+                    <!-- Class Selector -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h2 class="text-lg font-semibold text-slate-700">เลือกชั้นเรียน</h2>
+                            <button id="manage-classes-btn" class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>
+                                จัดการชั้นเรียน
+                            </button>
+                        </div>
+                        <div id="class-selector" class="flex flex-wrap gap-2">
+                            <!-- Class buttons will be generated by JS -->
+                        </div>
                     </div>
                 </div>
-
-                <!-- Class Selector -->
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 class="text-lg font-semibold text-slate-700">เลือกชั้นเรียน</h2>
-                        <button id="manage-classes-btn" class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>
-                            จัดการชั้นเรียน
-                        </button>
+    
+                <!-- Dynamic Content Area -->
+                <div id="content-area">
+                    <!-- Scores View -->
+                    <div id="scores-view" class="view"></div>
+                    <!-- Students View -->
+                    <div id="students-view" class="view hidden"></div>
+                    <!-- Summary View -->
+                    <div id="summary-view" class="view hidden"></div>
+                    <!-- AI Assistant View -->
+                    <div id="ai-view" class="view hidden"></div>
+                    <!-- Welcome/Instruction Message -->
+                    <div id="welcome-message" class="text-center p-10 bg-white rounded-xl shadow-md">
+                        <h2 class="text-2xl font-semibold text-green-600 mb-2">ยินดีต้อนรับสู่ระบบบันทึกคะแนนเก็บ</h2>
+                        <p class="text-slate-500">กรุณาเลือกชั้นเรียนที่ต้องการจัดการข้อมูลจากปุ่มด้านบน</p>
                     </div>
-                    <div id="class-selector" class="flex flex-wrap gap-2">
-                        <!-- Class buttons will be generated by JS -->
+                </div>
+            </main>
+    
+            <!-- Footer -->
+            <footer class="bg-white p-6 mt-8 border-t border-slate-200">
+                <div class="container mx-auto text-center text-slate-500">
+                    <p class="text-sm">ครูสายฝน ต๊ะวันนา | โรงเรียนอนุบาลลำพูน สำนักงานเขตพื้นที่การศึกษาประถมศึกษาลำพูน เขต 1</p>
+                    <div class="flex justify-center gap-4 mt-4">
+                        <a href="https://www.facebook.com/kroofontutor2466/" target="_blank" class="hover:text-green-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.196h3.312z"></path></svg>
+                        </a>
+                        <a href="https://www.tiktok.com/@kroofontutor" target="_blank" class="hover:text-green-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-2.43.05-4.84-.94-6.44-2.88-1.59-1.94-2.22-4.67-1.55-7.15.65-2.45 2.51-4.27 4.81-5.02.57-.18 1.16-.3 1.75-.38v4.86c-1.07.18-2.12.5-3.11.98-.62.3-1.2.66-1.74 1.09-.49.39-1.17.61-1.8.4-1.2-.4-1.38-2.21-.49-3.23.83-.93 1.9-1.51 3.01-1.85.38-.11.75-.24 1.13-.35-.02-3.54.02-7.06-.01-10.59Z"></path></svg>
+                        </a>
+                        <a href="https://www.youtube.com/@rainytawanna2656" target="_blank" class="hover:text-green-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582 7.237A2.062 2.062 0 0 0 20.126 5.8a27.182 27.182 0 0 0-16.252 0A2.062 2.062 0 0 0 2.418 7.237a21.465 21.465 0 0 0 0 9.526 2.062 2.062 0 0 0 1.456 1.437 27.182 27.182 0 0 0 16.252 0 2.062 2.062 0 0 0 1.456-1.437 21.465 21.465 0 0 0 0-9.526ZM9.75 14.348V9.652l4.5 2.348-4.5 2.348Z"></path></svg>
+                        </a>
                     </div>
                 </div>
-            </div>
-
-            <!-- Dynamic Content Area -->
-            <div id="content-area">
-                <!-- Scores View -->
-                <div id="scores-view" class="view"></div>
-                <!-- Students View -->
-                <div id="students-view" class="view hidden"></div>
-                <!-- Summary View -->
-                <div id="summary-view" class="view hidden"></div>
-                <!-- AI Assistant View -->
-                <div id="ai-view" class="view hidden"></div>
-                <!-- Welcome/Instruction Message -->
-                <div id="welcome-message" class="text-center p-10 bg-white rounded-xl shadow-md">
-                    <h2 class="text-2xl font-semibold text-green-600 mb-2">ยินดีต้อนรับสู่ระบบบันทึกคะแนนเก็บ</h2>
-                    <p class="text-slate-500">กรุณาเลือกชั้นเรียนที่ต้องการจัดการข้อมูลจากปุ่มด้านบน</p>
-                </div>
-            </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-white p-6 mt-8 border-t border-slate-200">
-            <div class="container mx-auto text-center text-slate-500">
-                <p class="text-sm">ครูสายฝน ต๊ะวันนา | โรงเรียนอนุบาลลำพูน สำนักงานเขตพื้นที่การศึกษาประถมศึกษาลำพูน เขต 1</p>
-                <div class="flex justify-center gap-4 mt-4">
-                    <a href="https://www.facebook.com/kroofontutor2466/" target="_blank" class="hover:text-green-500 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.196h3.312z"></path></svg>
-                    </a>
-                    <a href="https://www.tiktok.com/@kroofontutor" target="_blank" class="hover:text-green-500 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-2.43.05-4.84-.94-6.44-2.88-1.59-1.94-2.22-4.67-1.55-7.15.65-2.45 2.51-4.27 4.81-5.02.57-.18 1.16-.3 1.75-.38v4.86c-1.07.18-2.12.5-3.11.98-.62.3-1.2.66-1.74 1.09-.49.39-1.17.61-1.8.4-1.2-.4-1.38-2.21-.49-3.23.83-.93 1.9-1.51 3.01-1.85.38-.11.75-.24 1.13-.35-.02-3.54.02-7.06-.01-10.59Z"></path></svg>
-                    </a>
-                    <a href="https://www.youtube.com/@rainytawanna2656" target="_blank" class="hover:text-green-500 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21.582 7.237A2.062 2.062 0 0 0 20.126 5.8a27.182 27.182 0 0 0-16.252 0A2.062 2.062 0 0 0 2.418 7.237a21.465 21.465 0 0 0 0 9.526 2.062 2.062 0 0 0 1.456 1.437 27.182 27.182 0 0 0 16.252 0 2.062 2.062 0 0 0 1.456-1.437 21.465 21.465 0 0 0 0-9.526ZM9.75 14.348V9.652l4.5 2.348-4.5 2.348Z"></path></svg>
-                    </a>
-                </div>
-            </div>
-        </footer>
-
+            </footer>
+    
+        </div>
     </div>
 
     <!-- Modals (Hidden by default) -->
@@ -305,7 +334,14 @@
             }
         };
 
+        // --- AUTHENTICATION ---
+        // คุณครูสามารถเปลี่ยนชื่อผู้ใช้และรหัสผ่านได้ที่นี่
+        const CORRECT_USERNAME = 'teacher';
+        const CORRECT_PASSWORD = 'password123';
+
         // --- DOM ELEMENTS ---
+        const loginScreen = document.getElementById('login-screen');
+        const appContainer = document.getElementById('app-container');
         const mainNav = document.getElementById('main-nav');
         const classSelector = document.getElementById('class-selector');
         const views = {
@@ -342,62 +378,9 @@
                 state.data = {
                     'ป.4/1': {
                         students: [
-                            { id: 1, number: 1, name: 'เด็กชายกวิน ทองดี' },
-                            { id: 2, number: 2, name: 'เด็กหญิงขวัญข้าว มีชัย' },
-                            { id: 3, number: 3, name: 'เด็กชายจิรายุ แสงจันทร์' },
-                            { id: 4, number: 4, name: 'เด็กหญิงชลดา รักไทย' },
-                            { id: 5, number: 5, name: 'เด็กชายณัฐพงศ์ ศรีสุวรรณ' },
-                            { id: 6, number: 6, name: 'เด็กหญิงทิพวรรณ ใจงาม' },
-                            { id: 7, number: 7, name: 'เด็กชายธนากร วงศ์ษา' },
-                            { id: 8, number: 8, name: 'เด็กหญิงนภัสสร บุญมา' },
-                            { id: 9, number: 9, name: 'เด็กชายบวรศักดิ์ จันทะสอน' },
-                            { id: 10, number: 10, name: 'เด็กหญิงปภาวรินท์ ศรีเมือง' },
-                            { id: 11, number: 11, name: 'เด็กชายพงศกร แก้วใส' },
-                            { id: 12, number: 12, name: 'เด็กหญิงภัทรวดี อินทร์ใจเอื้อ' },
-                            { id: 13, number: 13, name: 'เด็กชายเมธัส ธรรมดี' },
-                            { id: 14, number: 14, name: 'เด็กหญิงรุจิรา สุขเกษม' },
-                            { id: 15, number: 15, name: 'เด็กชายวรเมธ ศิลาชัย' },
-                            { id: 16, number: 16, name: 'เด็กหญิงศศิธร อ่อนโยน' },
-                            { id: 17, number: 17, name: 'เด็กชายสุรศักดิ์ มณีวรรณ' },
-                            { id: 18, number: 18, name: 'เด็กหญิงอภิญญา ชัยชนะ' },
-                            { id: 19, number: 19, name: 'เด็กชายเอกภาพ ทองคำ' },
-                            { id: 20, number: 20, name: 'เด็กหญิงกัญญาณัฐ จิตต์มั่นคง' },
-                            { id: 21, number: 21, name: 'เด็กชายคณิน ชอบทำบุญ' },
-                            { id: 22, number: 22, name: 'เด็กหญิงจันทิมา ศรีสะอาด' },
-                            { id: 23, number: 23, name: 'เด็กชายชินวัฒน์ เดชบดินทร์' },
-                            { id: 24, number: 24, name: 'เด็กหญิงฐิติมา พรสวรรค์' },
-                            { id: 25, number: 25, name: 'เด็กชายณรงค์ฤทธิ์ ปัญญาวงศ์' },
-                            { id: 26, number: 26, name: 'เด็กหญิงธัญชนก เจริญสุข' },
-                            { id: 27, number: 27, name: 'เด็กชายนพรัตน์ แสงสว่าง' },
-                            { id: 28, number: 28, name: 'เด็กหญิงบุญสิตา มงคลชัย' },
-                            { id: 29, number: 29, name: 'เด็กชายประเสริฐ เลิศล้ำ' },
-                            { id: 30, number: 30, name: 'เด็กหญิงพิมพกานต์ งามวิไล' },
-                            { id: 31, number: 31, name: 'เด็กชายพีรพล บุญเกิด' },
-                            { id: 32, number: 32, name: 'เด็กหญิงมัลลิกา มาลาหอม' },
-                            { id: 33, number: 33, name: 'เด็กชายยศกร อุดมทรัพย์' },
-                            { id: 34, number: 34, name: 'เด็กหญิงลลิตา อำไพ' },
-                            { id: 35, number: 35, name: 'เด็กชายวิทวัส กิจเจริญ' },
-                            { id: 36, number: 36, name: 'เด็กหญิงสิริมาพร ตั้งใจเรียน' },
-                            { id: 37, number: 37, name: 'เด็กชายอานนท์ ผลดี' },
-                            { id: 38, number: 38, name: 'เด็กหญิงอุไรวรรณ กตัญญู' },
-                            { id: 39, number: 39, name: 'เด็กชายจักรพงษ์ จิตดี' },
-                            { id: 40, number: 40, name: 'เด็กหญิงฉัตรสุดา พัฒนา' },
-                            { id: 41, number: 41, name: 'เด็กชายเชษฐา สุขใจ' },
-                            { id: 42, number: 42, name: 'เด็กหญิงฑิฆัมพร เจริญผล' },
-                            { id: 43, number: 43, name: 'เด็กชายณภัทร มั่นคง' },
-                            { id: 44, number: 44, name: 'เด็กหญิงธิดารัตน์ ศรีไพร' },
-                            { id: 45, number: 45, name: 'เด็กชายนิธิศ ศุภโชค' },
-                            { id: 46, number: 46, name: 'เด็กหญิงเบญจวรรณ เรืองเดช' },
-                            { id: 47, number: 47, name: 'เด็กชายปรีชา สามารถ' },
-                            { id: 48, number: 48, name: 'เด็กหญิงผกามาศ บัวงาม' },
-                            { id: 49, number: 49, name: 'เด็กชายพรเทพ อมรสิน' },
-                            { id: 50, number: 50, name: 'เด็กหญิงภัทราพร สมบัติ' },
+                            { id: 1, number: 1, name: 'เด็กชายกวิน ทองดี' }, { id: 2, number: 2, name: 'เด็กหญิงขวัญข้าว มีชัย' }, { id: 3, number: 3, name: 'เด็กชายจิรายุ แสงจันทร์' }, { id: 4, number: 4, name: 'เด็กหญิงชลดา รักไทย' }, { id: 5, number: 5, name: 'เด็กชายณัฐพงศ์ ศรีสุวรรณ' }, { id: 6, number: 6, name: 'เด็กหญิงทิพวรรณ ใจงาม' }, { id: 7, number: 7, name: 'เด็กชายธนากร วงศ์ษา' }, { id: 8, number: 8, name: 'เด็กหญิงนภัสสร บุญมา' }, { id: 9, number: 9, name: 'เด็กชายบวรศักดิ์ จันทะสอน' }, { id: 10, number: 10, name: 'เด็กหญิงปภาวรินท์ ศรีเมือง' }, { id: 11, number: 11, name: 'เด็กชายพงศกร แก้วใส' }, { id: 12, number: 12, name: 'เด็กหญิงภัทรวดี อินทร์ใจเอื้อ' }, { id: 13, number: 13, name: 'เด็กชายเมธัส ธรรมดี' }, { id: 14, number: 14, name: 'เด็กหญิงรุจิรา สุขเกษม' }, { id: 15, number: 15, name: 'เด็กชายวรเมธ ศิลาชัย' }, { id: 16, number: 16, name: 'เด็กหญิงศศิธร อ่อนโยน' }, { id: 17, number: 17, name: 'เด็กชายสุรศักดิ์ มณีวรรณ' }, { id: 18, number: 18, name: 'เด็กหญิงอภิญญา ชัยชนะ' }, { id: 19, number: 19, name: 'เด็กชายเอกภาพ ทองคำ' }, { id: 20, number: 20, name: 'เด็กหญิงกัญญาณัฐ จิตต์มั่นคง' }, { id: 21, number: 21, name: 'เด็กชายคณิน ชอบทำบุญ' }, { id: 22, number: 22, name: 'เด็กหญิงจันทิมา ศรีสะอาด' }, { id: 23, number: 23, name: 'เด็กชายชินวัฒน์ เดชบดินทร์' }, { id: 24, number: 24, name: 'เด็กหญิงฐิติมา พรสวรรค์' }, { id: 25, number: 25, name: 'เด็กชายณรงค์ฤทธิ์ ปัญญาวงศ์' }, { id: 26, number: 26, name: 'เด็กหญิงธัญชนก เจริญสุข' }, { id: 27, number: 27, name: 'เด็กชายนพรัตน์ แสงสว่าง' }, { id: 28, number: 28, name: 'เด็กหญิงบุญสิตา มงคลชัย' }, { id: 29, number: 29, name: 'เด็กชายประเสริฐ เลิศล้ำ' }, { id: 30, number: 30, name: 'เด็กหญิงพิมพกานต์ งามวิไล' }, { id: 31, number: 31, name: 'เด็กชายพีรพล บุญเกิด' }, { id: 32, number: 32, name: 'เด็กหญิงมัลลิกา มาลาหอม' }, { id: 33, number: 33, name: 'เด็กชายยศกร อุดมทรัพย์' }, { id: 34, number: 34, name: 'เด็กหญิงลลิตา อำไพ' }, { id: 35, number: 35, name: 'เด็กชายวิทวัส กิจเจริญ' }, { id: 36, number: 36, name: 'เด็กหญิงสิริมาพร ตั้งใจเรียน' }, { id: 37, number: 37, name: 'เด็กชายอานนท์ ผลดี' }, { id: 38, number: 38, name: 'เด็กหญิงอุไรวรรณ กตัญญู' }, { id: 39, number: 39, name: 'เด็กชายจักรพงษ์ จิตดี' }, { id: 40, number: 40, name: 'เด็กหญิงฉัตรสุดา พัฒนา' }, { id: 41, number: 41, name: 'เด็กชายเชษฐา สุขใจ' }, { id: 42, number: 42, name: 'เด็กหญิงฑิฆัมพร เจริญผล' }, { id: 43, number: 43, name: 'เด็กชายณภัทร มั่นคง' }, { id: 44, number: 44, name: 'เด็กหญิงธิดารัตน์ ศรีไพร' }, { id: 45, number: 45, name: 'เด็กชายนิธิศ ศุภโชค' }, { id: 46, number: 46, name: 'เด็กหญิงเบญจวรรณ เรืองเดช' }, { id: 47, number: 47, name: 'เด็กชายปรีชา สามารถ' }, { id: 48, number: 48, name: 'เด็กหญิงผกามาศ บัวงาม' }, { id: 49, number: 49, name: 'เด็กชายพรเทพ อมรสิน' }, { id: 50, number: 50, name: 'เด็กหญิงภัทราพร สมบัติ' },
                         ],
-                        scoreItems: [
-                            { name: 'ความรู้พื้นฐานทางวิทยาศาสตร์', max: 10 },
-                            { name: 'ทดลองเรื่องพืช', max: 15 },
-                            { name: 'สอบกลางภาค', max: 25 },
-                        ],
+                        scoreItems: [ { name: 'ความรู้พื้นฐานทางวิทยาศาสตร์', max: 10 }, { name: 'ทดลองเรื่องพืช', max: 15 }, { name: 'สอบกลางภาค', max: 25 }, ],
                         scores: {},
                     },
                     'ป.4/2': { students: [], scoreItems: [], scores: {} }
@@ -601,7 +584,7 @@
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full bg-white" id="score-table">
-                            <thead>
+                            <thead class="bg-slate-50">
                                 <tr class="bg-slate-50">
                                     <th class="table-header w-16">เลขที่</th>
                                     <th class="table-header text-left min-w-[200px]">ชื่อ-นามสกุล</th>
@@ -948,7 +931,7 @@
             });
         }
 
-        // --- NEW: CLASS MANAGEMENT ---
+        // --- CLASS MANAGEMENT ---
         function renderManageClassesModal() {
             const container = document.getElementById('class-list-container');
             container.innerHTML = '';
@@ -1002,7 +985,7 @@
                     delete state.data[className];
 
                     if (state.currentClass === className) {
-                        state.currentClass = null;
+                        state.currentClass = state.classes[0] || null;
                     }
                     
                     saveData();
@@ -1012,6 +995,51 @@
                     openModal('manage-classes-modal', renderManageClassesModal);
                 };
             });
+        }
+
+        // --- AUTHENTICATION HANDLERS ---
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username-input').value;
+            const password = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('login-error');
+
+            if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                startApp();
+            } else {
+                errorMsg.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('isLoggedIn');
+            location.reload();
+        }
+
+        function startApp() {
+            loginScreen.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+
+            loadData();
+            mainNav.addEventListener('click', handleNavClick);
+            classSelector.addEventListener('click', handleClassClick);
+            document.getElementById('generate-feedback-btn').addEventListener('click', () => {
+                const prompt = document.getElementById('ai-prompt-textarea').value;
+                callGeminiAPI(prompt);
+            });
+            document.getElementById('manage-classes-btn').addEventListener('click', () => {
+                openModal('manage-classes-modal', renderManageClassesModal);
+            });
+            document.getElementById('add-class-form').addEventListener('submit', handleAddClass);
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+            // Set initial class if available
+            if (!state.currentClass && state.classes.length > 0) {
+                state.currentClass = state.classes[0];
+            }
+
+            render();
         }
         
         // --- INITIALIZATION ---
@@ -1029,19 +1057,14 @@
             `;
             document.head.appendChild(style);
             
-            loadData();
-            mainNav.addEventListener('click', handleNavClick);
-            classSelector.addEventListener('click', handleClassClick);
-            document.getElementById('generate-feedback-btn').addEventListener('click', () => {
-                const prompt = document.getElementById('ai-prompt-textarea').value;
-                callGeminiAPI(prompt);
-            });
-            document.getElementById('manage-classes-btn').addEventListener('click', () => {
-                openModal('manage-classes-modal', renderManageClassesModal);
-            });
-            document.getElementById('add-class-form').addEventListener('submit', handleAddClass);
-
-            render();
+            // Check login status
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                startApp();
+            } else {
+                loginScreen.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                document.getElementById('login-form').addEventListener('submit', handleLogin);
+            }
         }
 
         init();
