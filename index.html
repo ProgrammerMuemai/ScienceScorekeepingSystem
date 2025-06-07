@@ -149,6 +149,22 @@
 </div>
 
 <div id="modal-container" class="hidden">
+
+    <div id="support-modal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center p-4 modal-backdrop hidden">
+    <div class="bg-white rounded-xl shadow-2xl p-4 w-full max-w-xs text-center relative">
+        <button onclick="closeModal()" class="absolute -top-3 -right-3 bg-white rounded-full p-1.5 shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        
+        <h3 class="text-lg font-semibold mb-3 text-slate-800">สนับสนุนผู้พัฒนา</h3>
+        <img src="https://raw.githubusercontent.com/ProgrammerMuemai/ScienceScorekeepingSystem/main/prompay.jpg" alt="PromptPay QR Code" class="w-full h-auto rounded-lg">
+        <p class="text-sm text-slate-500 mt-3">ขอขอบคุณทุกการสนับสนุนครับ</p>
+    </div>
+</div>
+
+
     <div id="student-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
             <h3 id="student-modal-title" class="text-xl font-semibold mb-4">เพิ่มรายชื่อนักเรียน</h3>
@@ -241,6 +257,7 @@
         </form>
         <div class="flex justify-end mt-6"><button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ปิด</button></div>
     </div>
+
 </div>
 
 <div id="manage-subjects-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 modal-backdrop">
@@ -265,6 +282,36 @@
 </div>
 
 </div>
+
+
+<footer class="bg-slate-100 border-t border-slate-200 mt-12 py-6">
+    <div class="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        
+        <div class="flex items-center gap-4">
+            <a href="https://www.facebook.com/mengxdiy" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-blue-600 transition-colors">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                </svg>
+            </a>
+            <a href="https://youtube.com/@mengdiy?si=hMkRNuXqLcWiuzEr" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-red-600 transition-colors">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 01-1.768 1.768c-1.56.419-7.624.419-7.624.419s-6.065 0-7.624-.419a2.505 2.505 0 01-1.768-1.768C2 15.255 2 12 2 12s0-3.255.418-4.814a2.505 2.505 0 011.768-1.768C5.744 5 11.808 5 11.808 5s6.065 0 7.624.418zM9.544 15.145l6.361-3.145-6.361-3.145v6.29z" clip-rule="evenodd" />
+                </svg>
+            </a>
+            <a href="https://www.tiktok.com/@mengdiy?_t=ZS-8x042iyuYIi&_r=1" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-black transition-colors">
+    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+    </svg>
+</a>
+        </div>
+
+        <div>
+            <button id="support-developer-btn" class="px-4 py-2 bg-yellow-400 text-yellow-900 font-semibold rounded-lg shadow-md hover:bg-yellow-500 transition-colors transform hover:-translate-y-0.5">
+                💛 สนับสนุนผู้พัฒนา
+            </button>
+        </div>
+    </div>
+</footer>
 
 <script>
     // --- FIREBASE CONFIGURATION ---
@@ -832,6 +879,7 @@ function updateLogoImages(url) {
             document.getElementById('add-class-form').addEventListener('submit', handleAddClass);
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
             document.getElementById('logo-file-input').addEventListener('change', handleLogoUpload);
+            document.getElementById('support-developer-btn').addEventListener('click', () => openModal('support-modal'));
             appContainer.dataset.listenersAdded = 'true';
         }
     }
