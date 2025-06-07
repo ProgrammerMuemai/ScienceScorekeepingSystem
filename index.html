@@ -87,11 +87,11 @@
                 <div class="flex flex-col sm:flex-row gap-2 items-center">
                    <div id="user-info" class="text-sm text-slate-600 mb-2 sm:mb-0 sm:mr-4"></div>
                    <div class="flex gap-3">
-                       <button id="manage-subjects-btn" class="styled-btn bg-blue-500">
+                       <button id="manage-subjects-btn" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-blue-500 text-white shadow-md scale-105">
                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" /></svg>
                            <span>จัดการรายวิชา</span>
                        </button>
-                       <button id="logout-btn" class="styled-btn bg-red-500">
+                       <button id="logout-btn" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-red-500 text-white shadow-md scale-105">
                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" /></svg>
                            <span>ออกจากระบบ</span>
                        </button>
@@ -184,7 +184,7 @@
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ยกเลิก</button>
-                    <button type="submit" class="styled-btn bg-green-500">เพิ่มรายการ</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-green-500 text-white shadow-md scale-105">เพิ่มรายการ</button>
                 </div>
             </form>
         </div>
@@ -198,7 +198,7 @@
             <div id="excel-mapping-area" class="hidden"></div>
             <div class="flex justify-end gap-3">
                 <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ยกเลิก</button>
-                <button id="import-excel-btn" type="button" class="styled-btn bg-gradient-to-r from-blue-500 to-blue-600 disabled:opacity-50" disabled>ยืนยันการนำเข้า</button>
+                <button id="import-excel-btn" type="button" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-blue-500 text-white shadow-md scale-105 disabled:opacity-50" disabled>ยืนยันการนำเข้า</button>
             </div>
         </div>
     </div>
@@ -236,7 +236,7 @@
             <h4 class="font-medium text-slate-700 mb-2">เพิ่มชั้นเรียนใหม่</h4>
             <div class="flex gap-2">
                 <input type="text" id="new-class-name-input" class="flex-grow px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="เช่น ป.4/8" required>
-                <button type="submit" class="styled-btn bg-green-500">เพิ่ม</button>
+                <button type="submit" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-green-500 text-white shadow-md scale-105">เพิ่ม</button>
             </div>
         </form>
         <div class="flex justify-end mt-6"><button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ปิด</button></div>
@@ -258,7 +258,7 @@
                 <input type="text" id="new-teacher-name" placeholder="ชื่อครูผู้สอน" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
                 <input type="text" id="new-school-info" placeholder="ข้อมูลโรงเรียน" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
             </div>
-            <div class="mt-4"><button type="submit" class="styled-btn bg-green-500">เพิ่มรายวิชา</button></div>
+            <div class="mt-4"><button type="submit" class="px-2 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-green-500 text-white shadow-md scale-105">เพิ่มรายวิชา</button></div>
         </form>
         <div class="flex justify-end mt-6"><button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition-colors">ปิด</button></div>
     </div>
@@ -472,11 +472,11 @@ function updateLogoImages(url) {
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-4">
                     <h2 class="text-xl font-semibold text-slate-800">จัดการรายชื่อนักเรียน ชั้น ${state.currentClass} (${studentList.length} คน)</h2>
                     <div class="flex gap-3">
-                        <button id="import-btn" class="styled-btn bg-blue-500">
+                        <button id="import-btn" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-green-500 text-white shadow-md scale-105">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                             <span>เพิ่มจาก Excel</span>
                         </button>
-                        <button id="add-student-btn" class="styled-btn bg-green-500">
+                        <button id="add-student-btn" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-blue-500 text-white shadow-md scale-105">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
                             <span>เพิ่มรายชื่อ</span>
                         </button>
@@ -497,8 +497,8 @@ function updateLogoImages(url) {
                                 <td class="table-cell text-center">${s.number}</td>
                                 <td class="table-cell">${s.name}</td>
                                 <td class="table-cell text-center">
-                                    <button onclick="handleEditStudent(${s.id})" class="edit-btn">แก้ไข</button>
-                                    <button onclick="handleDeleteStudent(${s.id})" class="delete-btn">ลบ</button>
+                                    <button class="px-1 py-1 rounded-lg font-medium transition-all duration-200 text-sm md:text-sm bg-green-500 text-white shadow-md scale-105" onclick="handleEditStudent(${s.id})" class="edit-btn">แก้ไข</button>
+                                    <button class="px-1 py-1 rounded-lg font-medium transition-all duration-200 text-sm md:text-sm bg-red-500 text-white shadow-md scale-105" onclick="handleDeleteStudent(${s.id})" class="delete-btn">ลบ</button>
                                 </td>
                             </tr>`).join('') : `<tr><td colspan="3" class="text-center p-8 text-slate-400">ยังไม่มีข้อมูลนักเรียน</td></tr>`}
                         </tbody>
@@ -519,11 +519,11 @@ function updateLogoImages(url) {
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-4">
                     <h2 class="text-xl font-semibold text-slate-800">บันทึกคะแนน ชั้น ${state.currentClass}</h2>
                     <div class="flex gap-3">
-                        <button id="add-item-btn" class="styled-btn bg-green-500">
+                        <button id="add-item-btn" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-green-500 text-white shadow-md scale-105">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg>
                             <span>เพิ่มรายการคะแนน</span>
                         </button>
-                        <button id="save-scores-btn" class="styled-btn bg-blue-500">
+                        <button id="save-scores-btn" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-blue-500 text-white shadow-md scale-105">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586L7.707 10.293zM5 4a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" /></svg>
                             <span>บันทึกข้อมูล</span>
                         </button>
@@ -572,7 +572,7 @@ function updateLogoImages(url) {
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6">
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-4">
                     <h2 class="text-xl font-semibold text-slate-800">สรุปรวมคะแนน ชั้น ${state.currentClass}</h2>
-                    <button id="export-excel-btn" class="styled-btn bg-green-600">
+                    <button id="export-excel-btn" class="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm md:text-base bg-green-500 text-white shadow-md scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 9.293a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                         <span>ส่งออกเป็น Excel</span>
                     </button>
